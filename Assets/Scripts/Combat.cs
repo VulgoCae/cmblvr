@@ -5,11 +5,13 @@ using UnityEngine;
 public class Combat : MonoBehaviour {
 	ActionList ac;
 	public List<Action> mycombo = new List<Action>();
+
+//																	name, hp, sta, def, dodge, dex
 	public Player player = new Player("Bobz", 15, 9, 3, 3, 3);
-	public void MyComboLog(){
+	
+	public void MyComboLog() {
         Debug.Log("Actions:");
-         foreach (Action action in mycombo)
-        {
+         foreach (Action action in mycombo) {
             Debug.Log("Name: " + action.name + " Atk: " + action.atk + " Cost: " + action.cost);
         } }
 	public void Inputs(){

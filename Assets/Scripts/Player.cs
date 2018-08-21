@@ -7,8 +7,7 @@ public class Player {
     public int hpMax, hpNow, staMax, staNow;
     public int def, dodge, dex;
 
-    public Player(string newName, int newHp, int newSta, int newDef, int newDodge, int newDex)
-    {
+    public Player(string newName, int newHp, int newSta, int newDef, int newDodge, int newDex) {
         name = newName;
         hpMax = newHp;
         hpNow = newHp;
