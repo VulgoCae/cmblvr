@@ -3,17 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Combat : MonoBehaviour {
+	
 	ActionList ac;
+
 	public List<Action> mycombo = new List<Action>();
 
-//																	name, hp, sta, def, dodge, dex
+// name, hp, sta, def, dodge, dex
 	public Player player = new Player("Bobz", 15, 9, 3, 3, 3);
-	
-	public void MyComboLog() {
-        Debug.Log("Actions:");
-         foreach (Action action in mycombo) {
-            Debug.Log("Name: " + action.name + " Atk: " + action.atk + " Cost: " + action.cost);
-        } }
+
+	public void MyComboLog(){
+		Debug.Log("Actions in mycombo list:");
+			foreach (Action action in mycombo) {
+				Debug.Log("Name: " + action.name + " Atk: " + action.atk + " Cost: " + action.cost);}}
+
+  public ComboCostSum(){
+  	public int comboCost;
+  	foreach(Action action in mycombo)
+  	{
+  		comboCost += action.cost;
+  	}
+  	return comboCost;} 
+
 	public void Inputs(){
 		if (Input.GetKeyDown(KeyCode.Q))
 		{	
@@ -52,8 +62,12 @@ public class Combat : MonoBehaviour {
 			Debug.Log("Space - combo confirm");
 			mycombo.Clear();
 		}}
+	
 	public void PlayerLog(){}
-	void Start () {	ac = GetComponent<ActionList>();
-					PlayerLog(); }
+
+	void Start () {
+		ac = GetComponent<ActionList>();
+		PlayerLog(); }
+
 	void Update () { Inputs(); }
 }
