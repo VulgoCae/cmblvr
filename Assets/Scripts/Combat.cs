@@ -16,7 +16,7 @@ public class Combat : MonoBehaviour {
 			foreach (Action action in mycombo) {
 				Debug.Log("Name: " + action.name + " Atk: " + action.atk + " Cost: " + action.cost);}}
 
-  public ComboCostSum(){
+	public ComboCostSum(){
   	public int comboCost;
   	foreach(Action action in mycombo)
   	{
