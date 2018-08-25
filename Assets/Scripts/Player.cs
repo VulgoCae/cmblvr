@@ -8,9 +8,9 @@ public class Player {
 
 		public int hpMax, hpNow, staMax, staNow;
 
-		public int def, dodge, dex;
+		public int def, dodge, charge;
 		
-		public Player(string newName, int newHp, int newSta, int newDef, int newDodge, int newDex) {
+		public Player(string newName, int newHp, int newSta, int newDef, int newDodge, int newCharge) {
 				name = newName;
 				hpMax = newHp;
 				hpNow = newHp;
@@ -18,6 +18,6 @@ public class Player {
 				staNow = newSta;
 				def = newDef;
 				dodge = newDodge;
-				dex = newDex;
+				charge = newCharge;
 		}
 }

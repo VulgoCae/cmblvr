@@ -4,57 +4,57 @@ using UnityEngine;
 using System.Linq;
 
 public class Combat : MonoBehaviour {
-	
-		ActionList ac;
-    public int myComboCost;
-    public int myComboAtk;
-    public int myComboMov;
-    public int myComboTreat;
-    public int myComboComplexity;
-    public bool staEnough;
 
-    public List<Action> mycombo = new List<Action>();
+	ActionList ac;
+	public int myComboCost;
+	public int myComboAtk;
+	public int myComboMov;
+	public int myComboTreat;
+	public int myComboPower;
+	public bool staEnough;
 
-    public void MyComboClear()
-    {
-        myComboCost = 0;
-        myComboAtk = 0;
-        myComboMov = 0;
-        myComboTreat = 0;
-        myComboComplexity = 0;
-        mycombo.Clear();
-    }
-    public bool StaCheck()
-    {
-        if(player.staNow > myComboCost)
-        {
-            staEnough = true;
-        }
-        if(player.staNow < myComboCost)
-        {
-            staEnough = false;
-        }
-        return staEnough;
-    }
+	public List<Action> mycombo = new List<Action>();
 
-    // name, hp, sta, def, dodge, dex
-    public Player player = new Player("Bobz", 15, 9, 3, 3, 3);
+	public void MyComboClear()
+	{
+		myComboCost = 0;
+		myComboAtk = 0;
+		myComboMov = 0;
+		myComboTreat = 0;
+		myComboPower = 0;
+		mycombo.Clear();
+	}
+	public bool StaCheck()
+	{
+		if(player.staNow > myComboCost)
+		{
+			staEnough = true;
+		}
+		if(player.staNow < myComboCost)
+		{
+			staEnough = false;
+		}
+		return staEnough;
+	}
 
-    public int MyComboSum()
-    {
-        foreach (Action action in mycombo)
-        {
-            myComboCost += action.cost;
-            myComboAtk += action.atk;
-            myComboMov += action.mov;
-            myComboTreat += action.treat;
-            myComboComplexity += action.complexity;
+	// name, hp, sta, def, dodge, dex
+	public Player player = new Player("Bobz", 15, 9, 3, 3, 3);
 
-        }
-        return myComboCost;
-    }
+	public int MyComboSum()
+	{
+		foreach (Action action in mycombo)
+		{
+			myComboCost += action.cost;
+			myComboAtk += action.atk;
+			myComboMov += action.mov;
+			myComboTreat += action.treat;
+			myComboPower += action.power;
 
-    public void MyComboLog(){
+		}
+		return myComboCost;
+	}
+
+	public void MyComboLog(){
 		Debug.Log("Actions in mycombo list:");
 			foreach (Action action in mycombo) {
 				Debug.Log("Name: " + action.name + " Atk: " + action.atk + " Cost: " + action.cost);}}
@@ -93,9 +93,9 @@ public class Combat : MonoBehaviour {
 		}
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
-			var lastcombo = new List<Action>(mycombo);
-			Debug.Log("Space - combo confirm");
-            MyComboClear();
+			//var lastcombo = new List<Action>(mycombo);
+			//Debug.Log("Space - combo confirm");
+			MyComboClear();
 		}}
 	
 	public void PlayerLog(){}
