@@ -8,7 +8,7 @@ public class Combat : MonoBehaviour {
 	ActionList ac;
 	CreatureList cl;
 	ComboList cmbs;
-
+//
 	public int myComboCost;
 	public int myComboAtk;
 	public int myComboMov;
@@ -18,26 +18,34 @@ public class Combat : MonoBehaviour {
 	public Text creatureLog;
 	public Text comboLog;
 	public Text mycomboLog;
+	public Text combatLog;
 	public bool staEnough;
 	public bool deepBreath;
 	public bool standYourGround;
 	public bool flyingKick;
 	public bool uppercut;
 	public bool canAddAction;
+//
+
 	public List<Action> mycombo = new List<Action>();
+	public List<bool> combosforcheck = new List<bool>();
+
 	public void ComboListChecker()
 	{
 		deepBreath = mycombo.SequenceEqual(cmbs.deepBreath);
 		standYourGround = mycombo.SequenceEqual(cmbs.standYourGround);
 		flyingKick = mycombo.SequenceEqual(cmbs.flyingKick);
 		uppercut = mycombo.SequenceEqual(cmbs.uppercut);
-
 	}
 
 	public void MyComboAddLog()
 	{
 		comboLog.text = "Action " + mycombo[mycombo.Count - 1].name + " has been added";
-		MyComboLog();
+		foreach (Action action in mycombo)
+		{
+			mycomboLog.text += " " + action.name;
+		}
+		MyComboSum();
 	}
 
 	public bool ActionCostChecker(int energy, int stamina)
@@ -51,33 +59,25 @@ public class Combat : MonoBehaviour {
 
 	public void MyComboLog()
 	{
-		mycomboLog.text = " ";
-
 		if(deepBreath == true)
 		{
-			mycomboLog.text += "\nDeep Breath is ready";
+			mycomboLog.text = "Deep Breath is ready";
 			canAddAction = false;
 		}
 		if(standYourGround == true)
 		{
-			mycomboLog.text += "\nStand Your Ground is ready";
+			mycomboLog.text = "Stand Your Ground is ready";
 			canAddAction = false;
 		}
 		if(flyingKick == true)
 		{
-			mycomboLog.text += "\nFlying Kick is ready";
+			mycomboLog.text = "Flying Kick is ready";
 			canAddAction = false;
 		}
 		if(uppercut == true)
 		{
-			mycomboLog.text += "\nUppercut is ready";
+			mycomboLog.text = "Uppercut is ready";
 			canAddAction = false;
-		}
-
-
-		foreach (Action action in mycombo)
-		{
-			mycomboLog.text += " " + action.name;
 		}
 	}
 
@@ -99,33 +99,27 @@ public class Combat : MonoBehaviour {
 	public bool ComboCostCheck()
 	{
 		if(p.staNow > myComboCost)
-		{
-			staEnough = true;
-		}
+		{ staEnough = true; }
 		if(p.staNow < myComboCost)
-		{
-			staEnough = false;
-		}
+		{ staEnough = false; 
+		  combatLog.text = "Not enough stamina.";}
 		return staEnough;
 	}
 
-	public int MyComboSum()
+	public void MyComboSum()
 	{
 		foreach (Action action in mycombo)
 		{
-			myComboCost += action.cost;
-			myComboAtk += action.atk;
-			myComboMov += action.mov;
-			myComboTreat += action.treat;
-			myComboPower += action.power;
-
+			myComboCost = action.cost;
+			myComboAtk = action.atk;
+			myComboMov = action.mov;
+			myComboTreat = action.treat;
+			myComboPower = action.power;
 		}
-		return myComboCost;
 	}
 
 	public void MyComboDexChecker()
 	{
-		
 	}
 
 	public void Inputs()
@@ -133,51 +127,44 @@ public class Combat : MonoBehaviour {
 		if(canAddAction == true)
 		{
 			if (Input.GetKeyDown(KeyCode.Q))
-			{	
-				if(ActionCostChecker(ac.actionlist[0].cost, p.staNow))
-				{
-					mycombo.Add(ac.actionlist[0]);
-					if(p.staNow < p.staMax)
-					{
-						p.staNow -= ac.actionlist[0].cost;
-					}
-				}
-				else mycomboLog.text = "Not enough stamina";
-				Debug.Log("Q");
+			{
+				mycombo.Add(ac.actionlist[0]);
+				//Debug.Log("Q");
 				MyComboAddLog();
 			}
 
 			if (Input.GetKeyDown(KeyCode.W))
 			{
 				mycombo.Add(ac.actionlist[1]);
-				Debug.Log("W");
+				//Debug.Log("W");
 				MyComboAddLog();
-
 			}
+
 			if (Input.GetKeyDown(KeyCode.E))
 			{
 				mycombo.Add(ac.actionlist[2]);
-				Debug.Log("E");
+				//Debug.Log("E");
 				MyComboAddLog();
 			}
+
 			if (Input.GetKeyDown(KeyCode.I))
 			{
 				mycombo.Add(ac.actionlist[3]);
-				Debug.Log("I");
+				//Debug.Log("I");
 				MyComboAddLog();
-
 			}
+
 			if (Input.GetKeyDown(KeyCode.O))
 			{
 				mycombo.Add(ac.actionlist[4]);
-				Debug.Log("O");
+				//Debug.Log("O");
 				MyComboAddLog();
-
 			}
+
 			if (Input.GetKeyDown(KeyCode.P))
 			{
 				mycombo.Add(ac.actionlist[5]);
-				Debug.Log("P");
+				//Debug.Log("P");
 				MyComboAddLog();
 			}
 		}
@@ -185,7 +172,7 @@ public class Combat : MonoBehaviour {
 		{
 			//var lastcombo = new List<Action>(mycombo);
 			//Debug.Log("Space - combo confirm");
-			comboLog.text = "My combo has been cleared";
+			comboLog.text = "Combo has been cleared";
 			MyComboClear();
 		}
 
@@ -193,20 +180,21 @@ public class Combat : MonoBehaviour {
 		{
 			MyComboSum();
 			ComboCostCheck();
-			if(staEnough == true)
+			if(deepBreath == true)
 			{
-				cl.creaturelist[0].hpNow -= myComboAtk;
-				cl.creaturelist[0].rsnNow += myComboTreat;
-				cl.creaturelist[0].spdNow += myComboPower;
-				cl.creaturelist[0].frnsNow += myComboTreat;
-				
-				p.dodge = myComboMov;
-				p.staNow -= myComboCost;
-				if(p.staNow > p.staMax)
-				{
-					p.staNow = p.staMax;
-				}
-				MyComboClear();
+				MyComboCalc();
+			}
+			if(standYourGround == true)
+			{
+				MyComboCalc();
+			}
+			if(flyingKick == true)
+			{
+				MyComboCalc();
+			}
+			if(uppercut == true)
+			{
+				MyComboCalc();
 			}
 			Debug.Log("C");
 		}
@@ -218,7 +206,8 @@ public class Combat : MonoBehaviour {
 			"\nHP: " + p.hpNow + "/" + p.hpMax +
 			"\nStamina: " + p.staNow + "/" + p.staMax +
 			"\nDefense: " + p.def + " Charge: " + p.charge +
-			"\nDodge: " + p.dodge + " Dexterity: " + p.dex;
+			"\nDodge: " + p.dodge + " Dexterity: " + p.dex + 
+			"\nCan add action: " + canAddAction;
 		creatureLog.text = "Creature Stats:" +
 			"\nHP: " + cl.creaturelist[0].hpNow + "/" + cl.creaturelist[0].hpMax +
 			"\nAttack: " + cl.creaturelist[0].atk + " Defense: " + cl.creaturelist[0].def +
@@ -226,6 +215,31 @@ public class Combat : MonoBehaviour {
 			"\nSpeed: " + cl.creaturelist[0].spdNow + "/" + cl.creaturelist[0].spdMax + 
 			" Frenesi: " + cl.creaturelist[0].frnsNow + "/" + cl.creaturelist[0].spdMax + 
 			"\nReasoning: " + cl.creaturelist[0].rsnNow + "/" + cl.creaturelist[0].rsnMax;
+	}
+
+	public void CombatLog()
+	{
+		combatLog.text = "Combo cost:\nStamina: " + myComboCost + " Attack: " + myComboAtk + " Treat: " + myComboTreat +
+							" Power: " + myComboPower + "\nDB: " + deepBreath + " SYG: " + standYourGround + " FK: " + flyingKick + " UC: " + uppercut;
+	}
+
+	public void MyComboCalc()
+	{
+		if(staEnough == true)
+		{
+			Debug.Log("mycombocalc");
+			cl.creaturelist[0].hpNow -= myComboAtk;
+			cl.creaturelist[0].rsnNow += myComboTreat;
+			cl.creaturelist[0].spdNow += myComboPower;
+			cl.creaturelist[0].frnsNow += myComboTreat;
+			p.dodge = myComboMov;
+			p.staNow -= myComboCost;
+			if(p.staNow > p.staMax)
+			{
+				p.staNow = p.staMax;
+			}
+			MyComboClear();
+		}
 	}
 
 	public Player p = new Player("Bobz", 15, 9, 3, 3, 3, 3);
@@ -236,6 +250,10 @@ public class Combat : MonoBehaviour {
 		cl = GetComponent<CreatureList>();
 		cmbs = GetComponent<ComboList>();
 		canAddAction = true;
+		combosforcheck.Add(deepBreath);
+		combosforcheck.Add(standYourGround);
+		combosforcheck.Add(flyingKick);
+		combosforcheck.Add(uppercut);
 	}
 
 	void Update ()
@@ -243,5 +261,8 @@ public class Combat : MonoBehaviour {
 		Inputs();
 		StatsLog();
 		ComboListChecker();
+		MyComboLog();
+		CombatLog();
+
 	}
 }
