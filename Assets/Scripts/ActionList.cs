@@ -7,7 +7,7 @@ public class ActionList : MonoBehaviour {
 	public List<Action> actionlist = new List<Action>();
 
 	private void Awake() {
-		/* name, atk, cost, mov, treat, complexity	 */
+		/* name, atk, cost, mov, treat, power	 */
 		actionlist.Add(new Action("Crouch", 0, -1, 0, 1, 0));
 		actionlist.Add(new Action("Jump", 2, 2, 2, 1, 2));
 		actionlist.Add(new Action("Stand", 0, -2, 0, 0, 0));

@@ -30,6 +30,40 @@ public class Combat : MonoBehaviour {
 	public List<Action> mycombo = new List<Action>();
 	public List<bool> combosforcheck = new List<bool>();
 
+	public void HPChecker()
+	{
+		if(cl.creaturelist[0].hpNow <= 0)
+		{
+			//creature owned
+		}
+		if(cl.creaturelist[0].hpNow <= 0)
+		{
+			//game over
+		}
+	}
+
+
+	public void TraitsChecker()
+	{
+		if(cl.creaturelist[0].spdNow >= cl.creaturelist[0].spdMax)
+		{
+			//creature hits the player
+			p.hpNow -= cl.creaturelist[0].atk;
+			cl.creaturelist[0].spdNow = 0;
+		}
+		if(cl.creaturelist[0].rsnNow >= cl.creaturelist[0].rsnMax)
+		{
+			//creature run away
+			cl.creaturelist[0].rsnNow = 0;
+		}
+		if(cl.creaturelist[0].frnsNow >= cl.creaturelist[0].frnsMax)
+		{
+			//creature gets buffed
+			cl.creaturelist[0].atk += cl.creaturelist[0].atk;
+			cl.creaturelist[0].frnsNow = 0;
+		}
+	}
+
 	public void ComboListChecker()
 	{
 		deepBreath = mycombo.SequenceEqual(cmbs.deepBreath);
@@ -94,6 +128,7 @@ public class Combat : MonoBehaviour {
 		flyingKick = false;
 		uppercut = false;
 		canAddAction = true;
+		mycomboLog.text = " ";
 	}
 
 	public bool ComboCostCheck()
@@ -196,6 +231,7 @@ public class Combat : MonoBehaviour {
 			{
 				MyComboCalc();
 			}
+			TraitsChecker();
 			Debug.Log("C");
 		}
 	}
@@ -263,6 +299,6 @@ public class Combat : MonoBehaviour {
 		ComboListChecker();
 		MyComboLog();
 		CombatLog();
-
+		HPChecker();
 	}
 }
