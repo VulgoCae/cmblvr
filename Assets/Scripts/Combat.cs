@@ -25,6 +25,7 @@ public class Combat : MonoBehaviour {
 	public bool flyingKick;
 	public bool uppercut;
 	public bool canAddAction;
+	public bool playerMissed;
 //
 
 	public List<Action> mycombo = new List<Action>();
@@ -145,16 +146,21 @@ public class Combat : MonoBehaviour {
 	{
 		foreach (Action action in mycombo)
 		{
-			myComboCost = action.cost;
-			myComboAtk = action.atk;
-			myComboMov = action.mov;
-			myComboTreat = action.treat;
-			myComboPower = action.power;
+			myComboCost += action.cost;
+			myComboAtk += action.atk;
+			myComboMov += action.mov;
+			myComboTreat += action.treat;
 		}
 	}
 
-	public void MyComboDexChecker()
+	public bool MyComboDexChecker()
 	{
+		if(p.dex >= cl.creaturelist[0].dodge)
+		{
+			playerMissed = false;
+		}
+		else playerMissed = true;
+		return playerMissed;
 	}
 
 	public void Inputs()
@@ -241,8 +247,7 @@ public class Combat : MonoBehaviour {
 		playerLog.text = "Player Stats:" +
 			"\nHP: " + p.hpNow + "/" + p.hpMax +
 			"\nStamina: " + p.staNow + "/" + p.staMax +
-			"\nDefense: " + p.def + " Charge: " + p.charge +
-			"\nDodge: " + p.dodge + " Dexterity: " + p.dex + 
+			"\nDefense: " + p.def + "\nDodge: " + p.dodge + " Dexterity: " + p.dex + 
 			"\nCan add action: " + canAddAction;
 		creatureLog.text = "Creature Stats:" +
 			"\nHP: " + cl.creaturelist[0].hpNow + "/" + cl.creaturelist[0].hpMax +
@@ -255,7 +260,7 @@ public class Combat : MonoBehaviour {
 
 	public void CombatLog()
 	{
-		combatLog.text = "Combo cost:\nStamina: " + myComboCost + " Attack: " + myComboAtk + " Treat: " + myComboTreat +
+		combatLog.text = "Combo cost:\nStamina: " + myComboCost + " Attack: " + myComboAtk + " Treat: " + myComboTreat + " Mov: " + myComboMov +
 							" Power: " + myComboPower + "\nDB: " + deepBreath + " SYG: " + standYourGround + " FK: " + flyingKick + " UC: " + uppercut;
 	}
 
@@ -263,22 +268,28 @@ public class Combat : MonoBehaviour {
 	{
 		if(staEnough == true)
 		{
-			Debug.Log("mycombocalc");
-			cl.creaturelist[0].hpNow -= myComboAtk;
-			cl.creaturelist[0].rsnNow += myComboTreat;
-			cl.creaturelist[0].spdNow += myComboPower;
-			cl.creaturelist[0].frnsNow += myComboTreat;
-			p.dodge = myComboMov;
-			p.staNow -= myComboCost;
-			if(p.staNow > p.staMax)
+			MyComboDexChecker();
+			if(playerMissed == false)
 			{
-				p.staNow = p.staMax;
+				cl.creaturelist[0].hpNow -= myComboAtk;
+				cl.creaturelist[0].rsnNow += myComboTreat;
+				cl.creaturelist[0].frnsNow += myComboTreat;
+				if(myComboMov <= cl.creaturelist[0].spdNow)
+				{
+					cl.creaturelist[0].spdNow += 1;
+				}
+				p.dodge = myComboMov;
+				p.staNow += myComboCost;
+				if(p.staNow > p.staMax)
+				{
+					p.staNow = p.staMax;
+				}
+				MyComboClear();
 			}
-			MyComboClear();
 		}
 	}
 
-	public Player p = new Player("Bobz", 15, 9, 3, 3, 3, 3);
+	public Player p = new Player("Bobz", 15, 9, 3, 3, 3);
 
 	void Start ()
 	{
