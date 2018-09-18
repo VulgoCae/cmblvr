@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Combat : MonoBehaviour {
 	ActionList ac;
 	CreatureList cl;
 	ComboList cmbs;
-//
+
+	public int creatureIndex = 0;
+	public int turnCount;
 	public int myComboCost;
 	public int myComboAtk;
 	public int myComboMov;
@@ -26,42 +29,41 @@ public class Combat : MonoBehaviour {
 	public bool uppercut;
 	public bool canAddAction;
 	public bool playerMissed;
-//
+
 
 	public List<Action> mycombo = new List<Action>();
 	public List<bool> combosforcheck = new List<bool>();
 
 	public void HPChecker()
 	{
-		if(cl.creaturelist[0].hpNow <= 0)
+		if(cl.creaturelist[creatureIndex].hpNow <= 0)
 		{
-			//creature owned
+			creatureIndex ++;
 		}
-		if(cl.creaturelist[0].hpNow <= 0)
+		if(p.hpNow <= 0)
 		{
-			//game over
+			SceneManager.LoadScene("Scene00");
 		}
 	}
 
-
 	public void TraitsChecker()
 	{
-		if(cl.creaturelist[0].spdNow >= cl.creaturelist[0].spdMax)
+		if(cl.creaturelist[creatureIndex].spdNow >= cl.creaturelist[creatureIndex].spdMax)
 		{
 			//creature hits the player
-			p.hpNow -= cl.creaturelist[0].atk;
-			cl.creaturelist[0].spdNow = 0;
+			p.hpNow -= cl.creaturelist[creatureIndex].atk;
+			cl.creaturelist[creatureIndex].spdNow = 0;
 		}
-		if(cl.creaturelist[0].rsnNow >= cl.creaturelist[0].rsnMax)
+		if(cl.creaturelist[creatureIndex].rsnNow >= cl.creaturelist[creatureIndex].rsnMax)
 		{
 			//creature run away
-			cl.creaturelist[0].rsnNow = 0;
+			cl.creaturelist[creatureIndex].rsnNow = 0;
 		}
-		if(cl.creaturelist[0].frnsNow >= cl.creaturelist[0].frnsMax)
+		if(cl.creaturelist[creatureIndex].frnsNow >= cl.creaturelist[creatureIndex].frnsMax)
 		{
 			//creature gets buffed
-			cl.creaturelist[0].atk += cl.creaturelist[0].atk;
-			cl.creaturelist[0].frnsNow = 0;
+			cl.creaturelist[creatureIndex].atk += cl.creaturelist[creatureIndex].atk;
+			cl.creaturelist[creatureIndex].frnsNow = 0;
 		}
 	}
 
@@ -80,16 +82,6 @@ public class Combat : MonoBehaviour {
 		{
 			mycomboLog.text += " " + action.name;
 		}
-		MyComboSum();
-	}
-
-	public bool ActionCostChecker(int energy, int stamina)
-	{
-		if(energy <= stamina)
-		{
-			return true;
-		}
-		else return false;
 	}
 
 	public void MyComboLog()
@@ -134,7 +126,7 @@ public class Combat : MonoBehaviour {
 
 	public bool ComboCostCheck()
 	{
-		if(p.staNow > myComboCost)
+		if(p.staNow >= myComboCost)
 		{ staEnough = true; }
 		if(p.staNow < myComboCost)
 		{ staEnough = false; 
@@ -155,7 +147,7 @@ public class Combat : MonoBehaviour {
 
 	public bool MyComboDexChecker()
 	{
-		if(p.dex >= cl.creaturelist[0].dodge)
+		if(p.dex >= cl.creaturelist[creatureIndex].dodge)
 		{
 			playerMissed = false;
 		}
@@ -239,6 +231,9 @@ public class Combat : MonoBehaviour {
 			}
 			TraitsChecker();
 			Debug.Log("C");
+			turnCount += 1;
+			HPChecker();
+
 		}
 	}
 
@@ -250,12 +245,12 @@ public class Combat : MonoBehaviour {
 			"\nDefense: " + p.def + "\nDodge: " + p.dodge + " Dexterity: " + p.dex + 
 			"\nCan add action: " + canAddAction;
 		creatureLog.text = "Creature Stats:" +
-			"\nHP: " + cl.creaturelist[0].hpNow + "/" + cl.creaturelist[0].hpMax +
-			"\nAttack: " + cl.creaturelist[0].atk + " Defense: " + cl.creaturelist[0].def +
-			"\nDodge: " + cl.creaturelist[0].dodge + " Dexterity: " + cl.creaturelist[0].dex +
-			"\nSpeed: " + cl.creaturelist[0].spdNow + "/" + cl.creaturelist[0].spdMax + 
-			" Frenesi: " + cl.creaturelist[0].frnsNow + "/" + cl.creaturelist[0].spdMax + 
-			"\nReasoning: " + cl.creaturelist[0].rsnNow + "/" + cl.creaturelist[0].rsnMax;
+			"\nHP: " + cl.creaturelist[creatureIndex].hpNow + "/" + cl.creaturelist[creatureIndex].hpMax +
+			"\nAttack: " + cl.creaturelist[creatureIndex].atk + " Defense: " + cl.creaturelist[creatureIndex].def +
+			"\nDodge: " + cl.creaturelist[creatureIndex].dodge + " Dexterity: " + cl.creaturelist[creatureIndex].dex +
+			"\nSpeed: " + cl.creaturelist[creatureIndex].spdNow + "/" + cl.creaturelist[creatureIndex].spdMax + 
+			" Frenesi: " + cl.creaturelist[creatureIndex].frnsNow + "/" + cl.creaturelist[creatureIndex].spdMax + 
+			"\nReasoning: " + cl.creaturelist[creatureIndex].rsnNow + "/" + cl.creaturelist[creatureIndex].rsnMax;
 	}
 
 	public void CombatLog()
@@ -271,12 +266,12 @@ public class Combat : MonoBehaviour {
 			MyComboDexChecker();
 			if(playerMissed == false)
 			{
-				cl.creaturelist[0].hpNow -= myComboAtk;
-				cl.creaturelist[0].rsnNow += myComboTreat;
-				cl.creaturelist[0].frnsNow += myComboTreat;
-				if(myComboMov <= cl.creaturelist[0].spdNow)
+				cl.creaturelist[creatureIndex].hpNow -= myComboAtk;
+				cl.creaturelist[creatureIndex].rsnNow += myComboTreat;
+				cl.creaturelist[creatureIndex].frnsNow += myComboTreat;
+				if(myComboMov <= cl.creaturelist[creatureIndex].spdNow)
 				{
-					cl.creaturelist[0].spdNow += 1;
+					cl.creaturelist[creatureIndex].spdNow += 1;
 				}
 				p.dodge = myComboMov;
 				p.staNow += myComboCost;
@@ -286,12 +281,13 @@ public class Combat : MonoBehaviour {
 				}
 				MyComboClear();
 			}
+			MyComboClear();
 		}
 	}
 
 	public Player p = new Player("Bobz", 15, 9, 3, 3, 3);
 
-	void Start ()
+	void Awake()
 	{
 		ac = GetComponent<ActionList>();
 		cl = GetComponent<CreatureList>();
@@ -301,6 +297,10 @@ public class Combat : MonoBehaviour {
 		combosforcheck.Add(standYourGround);
 		combosforcheck.Add(flyingKick);
 		combosforcheck.Add(uppercut);
+
+	}
+	void Start ()
+	{
 	}
 
 	void Update ()
@@ -310,6 +310,5 @@ public class Combat : MonoBehaviour {
 		ComboListChecker();
 		MyComboLog();
 		CombatLog();
-		HPChecker();
 	}
 }
